@@ -1,0 +1,32 @@
+.wrapper {
+    display: grid;
+    grid-template-columns: 1fr 600px 1fr;
+    grid-auto-rows: auto;
+    grid-gap: 1em;
+}
+
+.playercards {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat {
+    grid-column: 3;
+}
+
+#draw {
+    grid-column: 2;
+}
+
+.header {
+    grid-column: 1/4;
+}
+
+.chat, #draw, .playercards, .header {
+    border: 2px solid black;
+}
+
+.playercard {
+    border: solid 1px black;
+}
