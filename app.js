@@ -25,7 +25,7 @@ io.on('connection', function (socket) {
         console.log(`player ${name} has connected`);
         socket.broadcast.emit('user-connected', name);
 
-        if (players !== {}){
+        if (players !== {}) {
             console.log('requested drawing from all ');
             socket.broadcast.emit('send-drawing', 'please send drawing');
             socket.on('whole-drawing', drawing => {
@@ -65,9 +65,9 @@ io.on('connection', function (socket) {
     });
 });
 
-const port = process.env.PORT || 3000;
+const port = 3000;
 server.listen(3000, function () {
-    console.log('listening on *:3000');
+    console.log('listening on port ', port);
 });
 
 

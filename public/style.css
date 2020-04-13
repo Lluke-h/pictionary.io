@@ -1,32 +1,106 @@
-.wrapper {
+
+html{
+    background: #2d3234;
+}
+.container {
     display: grid;
-    grid-template-columns: 1fr 600px 1fr;
-    grid-auto-rows: auto;
+    grid-template-areas:
+            "header header header"
+            "cards canvas chat"
+            "footer footer footer";
+
+    grid-template-columns: auto auto minmax(100px, 388px);
+    grid-template-rows: 100px 600px auto;
     grid-gap: 1em;
+
+    height: 100vh;
+}
+
+@media (max-width: 980px) {
+    .container {
+        grid-template-areas:
+                "header"
+                "canvas"
+                "chat"
+                "cards"
+                "footer";
+
+        grid-template-columns: 1fr;
+        grid-template-rows:
+                100px /* Header */
+                400px /* canvas */
+                200px /* chat */
+                minmax(75px, auto) /* cards */
+                auto; /* Footer */
+    }
+
+
 }
 
 .playercards {
-    grid-column: 1;
+    grid-area: cards;
     display: flex;
     flex-direction: column;
 }
 
 .chat {
-    grid-column: 3;
+    grid-area: chat;
 }
 
-#draw {
-    grid-column: 2;
+.canvascontainer {
+    grid-area: canvas;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+.chat{
+    display: flex;
+    flex-flow: row wrap;
+    flex-direction: column;
+}
+#message-container{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    /*overflow-x: scroll;*/
+    flex: 20
+}
+
+#message-container>div{
+    padding-left: 0.25em;
+}
+#message-container>div:nth-child(odd){
+    background: lightgrey;
+}
+
 
 .header {
-    grid-column: 1/4;
+    grid-area: header;
+    background: whitesmoke;
+    border-radius: 5px;
+    padding: 1em;
 }
 
-.chat, #draw, .playercards, .header {
-    border: 2px solid black;
+#draw{
+    background: whitesmoke;
+    border-radius: 2px;
 }
 
-.playercard {
-    border: solid 1px black;
+
+#draw, .chat, .header, .playercards{
+    background: #ecebf4;
+    border-radius: 1px;
+}
+
+#send-container{
+    flex: 1;
+    padding: 0.5em;
+    justify-content: center;
+}
+#message-input{
+    width: 80%;
+}
+#send-button{
+    width: 12%;
 }

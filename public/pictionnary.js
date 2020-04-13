@@ -33,6 +33,7 @@ function appendMessage(message) {
     const messageElement = document.createElement('div');
     messageElement.innerText = message;
     messageContainer.appendChild(messageElement)
+    messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
 // -------------- Join game ---------------
