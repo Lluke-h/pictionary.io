@@ -9,9 +9,9 @@ html{
             "cards canvas chat"
             "footer footer footer";
 
-    grid-template-columns: auto auto minmax(100px, 388px);
+    grid-template-columns: minmax(100px, 230px) auto minmax(100px, 388px);
     grid-template-rows: 100px 600px auto;
-    grid-gap: 1em;
+    grid-gap: 10px;
 
     height: 100vh;
 }
@@ -28,10 +28,11 @@ html{
         grid-template-columns: 1fr;
         grid-template-rows:
                 100px /* Header */
-                400px /* canvas */
+                500px /* canvas */
                 200px /* chat */
                 minmax(75px, auto) /* cards */
                 auto; /* Footer */
+        grid-gap: 10px;
     }
 
 
@@ -50,7 +51,8 @@ html{
 .canvascontainer {
     grid-area: canvas;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-evenly;
     align-items: center;
 }
 
@@ -77,9 +79,11 @@ html{
 
 .header {
     grid-area: header;
-    background: whitesmoke;
-    border-radius: 5px;
-    padding: 1em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
 }
 
 #draw{
@@ -103,4 +107,48 @@ html{
 }
 #send-button{
     width: 12%;
+}
+
+.choose-word{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.choose-word-text{
+    font-family: Arial, serif;
+    font-size: 30px;
+    color: #e9e9e9;
+    margin-bottom: 20px;
+}
+.choose_word {
+    margin: 10px auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+    max-width: 90%;
+}
+.word-button {
+    background-color:#f9f9f9;
+    border-radius:9px;
+    border:1px solid #dcdcdc;
+    display:inline-block;
+    cursor:pointer;
+    color: #181818;
+    font-family: Arial, serif;
+    font-size:15px;
+    padding:7px 12px;
+    text-decoration:none;
+    text-shadow:0px 1px 0px #ffffff;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.word-button:hover {
+    background-color:#e9e9e9;
+}
+.word-button:active {
+    position:relative;
+    top:1px;
 }

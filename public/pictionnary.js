@@ -32,7 +32,7 @@ socket.on('user-disconnected', name => {
 function appendMessage(message) {
     const messageElement = document.createElement('div');
     messageElement.innerText = message;
-    messageContainer.appendChild(messageElement)
+    messageContainer.appendChild(messageElement);
     messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
@@ -53,6 +53,7 @@ socket.on('receive-drawing', drawing => {
 
 
 socket.on('message', socket => console.log(socket));
+
 socket.on('draw', data => {
     isDrawing = true;
     console.log('received coords');
@@ -69,7 +70,7 @@ const ctx = canvas.getContext('2d');
 
 ctx.lineCap = 'round';
 ctx.lineJoin = 'round';
-ctx.strokeStyle = '#BADA55';
+ctx.strokeStyle = '#000000';
 
 let isDrawing = false;
 let lastX = -1;
@@ -124,8 +125,14 @@ canvas.addEventListener('mousemove', (e) => {
 });
 
 canvas.addEventListener('mousedown', () => {
-    startDraw();
-    socket.emit('startdraw')
+    // Player can only draw if it is his turn
+    if (myTurn) {
+        startDraw();
+        socket.emit('startdraw');
+        console.log('DRAWWWWWWWWWING')
+    } else {
+        console.log('not your turn sorry')
+    }
 });
 
 canvas.addEventListener('mouseup', () => {
@@ -145,4 +152,84 @@ socket.on('send-drawing', () => {
     socket.emit('whole-drawing', drawing);
     console.log('Sending back drawing');
 });
+
+// -------------------- Game logic ---------------------------------
+
+let myTurn = false;
+socket.on('your-turn', function (msg) {
+    myTurn = true;
+    getWords();
+});
+
+
+function getWords() {
+    // get 3 random words from a random word API
+    const url = 'https://random-word-api.herokuapp.com/word?number=3';
+
+    fetch(url)
+        .then(resp => resp.json())
+        .then(data => {
+            console.log(data);
+            chooseWord(data)
+        })
+        .catch(err => {
+            console.error(err.message)
+        });
+
+}
+
+function chooseWord(words) {
+    let word = 'placeholder';
+    console.log('Choose a word');
+    const container = document.querySelector('.canvascontainer');
+    const text = document.createElement('div');
+    const textContainer = document.createElement('div');
+    const buttonContainer = document.createElement('div');
+    textContainer.classList.add('choose-word');
+    textContainer.classList.add('choose-word-text');
+    buttonContainer.setAttribute('choose_word', 'note');
+    text.innerText = "It's your turn to draw ! Choose a word : ";
+
+    // 1. Create the buttons
+    const button1 = document.createElement("button");
+    button1.classList.add('word-button');
+    button1.innerHTML = words[0];
+
+    const button2 = document.createElement("button");
+    button2.classList.add('word-button');
+    button2.innerHTML = words[1];
+
+    const button3 = document.createElement("button");
+    button3.classList.add('word-button');
+    button3.innerHTML = words[2];
+
+    // 2. Append buttons
+    buttonContainer.appendChild(button1);
+    buttonContainer.appendChild(button2);
+    buttonContainer.appendChild(button3);
+
+    // 3. Add event handlers
+    button1.addEventListener("click", function () {
+        setWord(button1);
+    });
+    button2.addEventListener("click", function () {
+        setWord(button2);
+    });
+    button3.addEventListener("click", function () {
+        setWord(button3);
+    });
+
+    textContainer.appendChild(text);
+    textContainer.appendChild(buttonContainer);
+    container.insertBefore(textContainer, container.firstChild);
+
+    function setWord(button) {
+        console.log('clicked button');
+        word = button.innerHTML;
+        socket.emit('get-word', word);
+        container.removeChild(textContainer);
+    }
+
+
+}
 
