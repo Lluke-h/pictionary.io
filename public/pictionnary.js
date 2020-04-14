@@ -14,12 +14,12 @@ messageForm.addEventListener('submit', e => {
     e.preventDefault();
     const message = messageInput.value;
     console.log(message);
-    appendMessage(`You : ${message}`);
+    appendMessage(message, 'You');
     socket.emit('send-chat-message', message);
     messageInput.value = '';
 });
 //Receiving a message
-socket.on('chat-message', data => appendMessage(`${data.name} : ${data.message}`));
+socket.on('chat-message', data => appendMessage(data.message, data.name));
 
 socket.on('user-connected', name => {
     appendMessage(`${name} has joined the game`)
@@ -29,17 +29,21 @@ socket.on('user-disconnected', name => {
     appendMessage(`${name} has left the game`)
 });
 
-function appendMessage(message) {
+function appendMessage(message, name='server') {
     const messageElement = document.createElement('div');
-    messageElement.innerText = message;
+    messageElement.classList.add('message');
+    console.log(name);
+    messageElement.innerText = `${name} : ${message}`;
+    if (name === 'server') messageElement.classList.add('servermessage');
     messageContainer.appendChild(messageElement);
+    // autoscroll to botom
     messageContainer.scrollTop = messageContainer.scrollHeight;
 }
 
 // -------------- Join game ---------------
 
 const name = prompt('Enter your name');
-appendMessage('You joined the game');
+appendMessage('joined the game', 'you');
 socket.emit('new-user', name);
 socket.on('receive-drawing', drawing => {
     console.log('received drawing');
@@ -161,7 +165,6 @@ socket.on('your-turn', function (msg) {
     getWords();
 });
 
-
 function getWords() {
     // get 3 random words from a random word API
     const url = 'https://random-word-api.herokuapp.com/word?number=3';
@@ -177,7 +180,6 @@ function getWords() {
         });
 
 }
-
 function chooseWord(words) {
     let word = 'placeholder';
     console.log('Choose a word');
@@ -233,3 +235,28 @@ function chooseWord(words) {
 
 }
 
+socket.on('game-update', ({players, gameState}) => updateGame({players, gameState}));
+function updateGame({players, gameState}){
+    // draw player cards
+    Object.keys(players).forEach( key => {
+        const playercard = document.createElement('div');
+        playercard.classList.add('playercard');
+        const playerName = document.createElement('span');
+        const isDrawing = document.createElement('span');
+        const score = document.createElement('div');
+
+        playercard.innerText = players[key].name;
+        if (players[key].drawing) isDrawing.innerText = ' is drawing !';
+        score.innerText = `Score : ${players[key].score}`;
+
+        playercard.appendChild(playerName);
+        playercard.appendChild(isDrawing);
+        playercard.appendChild(score);
+
+        document.querySelector('.cardsflexcontainer').appendChild(playercard)
+    });
+
+
+    console.log(players);
+    console.log(gameState)
+}

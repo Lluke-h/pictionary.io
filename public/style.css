@@ -38,15 +38,7 @@ html{
 
 }
 
-.playercards {
-    grid-area: cards;
-    display: flex;
-    flex-direction: column;
-}
 
-.chat {
-    grid-area: chat;
-}
 
 .canvascontainer {
     grid-area: canvas;
@@ -56,25 +48,7 @@ html{
     align-items: center;
 }
 
-.chat{
-    display: flex;
-    flex-flow: row wrap;
-    flex-direction: column;
-}
-#message-container{
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    /*overflow-x: scroll;*/
-    flex: 20
-}
 
-#message-container>div{
-    padding-left: 0.25em;
-}
-#message-container>div:nth-child(odd){
-    background: lightgrey;
-}
 
 
 .header {
@@ -97,6 +71,29 @@ html{
     border-radius: 1px;
 }
 
+/* ---------- Chat Window -----------------*/
+
+.chat{
+    grid-area: chat;
+    display: flex;
+    flex-flow: row wrap;
+    flex-direction: column;
+}
+#message-container{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    /*overflow-x: scroll;*/
+    flex: 20
+}
+
+#message-container>div{
+    padding-left: 0.25em;
+}
+#message-container>div:nth-child(odd){
+    background: lightgrey;
+}
+
 #send-container{
     flex: 1;
     padding: 0.5em;
@@ -108,6 +105,18 @@ html{
 #send-button{
     width: 12%;
 }
+
+.message{
+    font-family: Arial, serif;
+    font-size: 14pt;
+}
+
+.servermessage{
+    color: red;
+    font-weight: bold;
+}
+
+/* ---------- Choose word prompt -------------*/
 
 .choose-word{
     display: flex;
@@ -151,4 +160,39 @@ html{
 .word-button:active {
     position:relative;
     top:1px;
+}
+
+/* ---------- Player Cards -------------*/
+
+.playercards {
+    grid-area: cards;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+
+}
+
+.cardsflexcontainer{
+    grid-area: cards;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: .5em;
+}
+
+.topcard{
+    padding: .5em;
+    font-family: Arial, serif;
+    font-size: 14pt;
+    font-weight: bold;
+    text-align: center;
+}
+.playercard{
+    border: #303030 solid 2px;
+    background: #a6a6a6;
+    border-radius: 3px;
+    padding: 1em;
+    font-family: Arial, serif;
+    font-size: 12pt;
+    margin-top: 5px;
 }

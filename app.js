@@ -18,21 +18,28 @@ let word = 'banana';
 io.on('connection', function (socket) {
     // New connection handling
     socket.on('new-user', name => {
+        io.sockets.emit('game-update', {players, gameState});
+        // add player to player list
+        players[socket.id] = {id: socket.id, name: name, score: 0, drawing: false};
         // if it's the first player the it's his turn
-        if (Object.keys(players).length === 0) {
+        if (Object.keys(players).length === 1){
+            setPlayerDrawing(socket);
+        }
+        console.log(`player ${name} has connected`);
+
+
+        function setPlayerDrawing(){
             // The player chooses a word which is sent back as an acknowledgment
+            players[socket.id].drawing = true;
+            io.sockets.emit('game-update', {players, gameState});
             socket.emit('your-turn', "It's your turn !");
             socket.on('get-word', (word) => {
-                console.log('the word is ', word);
                 gameState = {playerDrawing: players[socket.id], word: word};
-
             });
+
+
         }
 
-
-        players[socket.id] = {id: socket.id, name: name, score: 0, drawing: false};
-        console.log(`player ${name} has connected`);
-        socket.broadcast.emit('user-connected', name);
 
         // get the current drawing from the other players
         if (players !== {}) {
@@ -48,29 +55,31 @@ io.on('connection', function (socket) {
     });
 
 
-    // Chat messages
+    // Chat messages and word guesses
     socket.on('send-chat-message', msg => handleMessage(msg));
-
     function handleMessage(message) {
-        if (message.toLowerCase().includes(word)) {
-            if (message.toLowerCase() === word) { // player found word
+        if (message.toLowerCase().includes(gameState.word)) {
+            if (message.toLowerCase() === gameState.word) { // player found word
                 io.to(`${socket.id}`).emit('chat-message', {
-                    message: "You HAVE FOUND THE  WORD !!",
-                    name: players[socket.id].name
+                    message: "You've found the word !! It's your turn to draw",
+                    name: 'server'
                 });
                 socket.broadcast.emit('chat-message', {
                     message: `${players[socket.id].name} has found the word !`,
-                    name: ''
+                    name: 'server'
                 });
             } else {
-                io.to(`${socket.id}`).emit('chat-message', {message: "You are close !", name: players[socket.id].name})
+                io.to(`${socket.id}`).emit('chat-message', {message: "You are close !", name: 'server'})
             }
         } else {
+            console.log('sent a message with name', players[socket.id].name);
             socket.broadcast.emit('chat-message', {message: message, name: players[socket.id].name});
         }
     }
 
-    // Drawing
+
+
+    // -------------------- Drawing --------------------------
 
     socket.on('draw', (data) => {
         socket.broadcast.emit('draw', data);
@@ -83,11 +92,18 @@ io.on('connection', function (socket) {
     });
 
 
-    //Whenever someone disconnects
+
+    // ------------- Whenever someone disconnects -----------------
     socket.on('disconnect', () => {
         console.log('A user disconnected');
-        socket.broadcast.emit('user-disconnected', players[socket.id].name);
-        delete players[socket.id];
+        try{
+            socket.broadcast.emit('user-disconnected', players[socket.id].name);
+            delete players[socket.id];
+        }
+        catch (e) {
+            console.log('an unknown player disconnected (connected before server start)')
+        }
+
         // io.sockets.emit('playerupdate', players);
     });
 });
