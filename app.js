@@ -18,9 +18,10 @@ let word = 'banana';
 io.on('connection', function (socket) {
     // New connection handling
     socket.on('new-user', name => {
-        io.sockets.emit('game-update', {players, gameState});
-        // add player to player list
+
+        // add player to player list and update clients
         players[socket.id] = {id: socket.id, name: name, score: 0, drawing: false};
+        io.sockets.emit('game-update', {players, gameState});
         // if it's the first player the it's his turn
         if (Object.keys(players).length === 1){
             setPlayerDrawing(socket);
@@ -99,6 +100,7 @@ io.on('connection', function (socket) {
         try{
             socket.broadcast.emit('user-disconnected', players[socket.id].name);
             delete players[socket.id];
+            io.sockets.emit('game-update', {players, gameState});
         }
         catch (e) {
             console.log('an unknown player disconnected (connected before server start)')

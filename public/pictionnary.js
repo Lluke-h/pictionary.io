@@ -29,7 +29,7 @@ socket.on('user-disconnected', name => {
     appendMessage(`${name} has left the game`)
 });
 
-function appendMessage(message, name='server') {
+function appendMessage(message, name = 'server') {
     const messageElement = document.createElement('div');
     messageElement.classList.add('message');
     console.log(name);
@@ -180,6 +180,7 @@ function getWords() {
         });
 
 }
+
 function chooseWord(words) {
     let word = 'placeholder';
     console.log('Choose a word');
@@ -236,9 +237,12 @@ function chooseWord(words) {
 }
 
 socket.on('game-update', ({players, gameState}) => updateGame({players, gameState}));
-function updateGame({players, gameState}){
+
+function updateGame({players, gameState}) {
     // draw player cards
-    Object.keys(players).forEach( key => {
+    const cardcontainer = document.querySelector('.cardsflexcontainer');
+    cardcontainer.innerHTML = '';
+    Object.keys(players).forEach(key => {
         const playercard = document.createElement('div');
         playercard.classList.add('playercard');
         const playerName = document.createElement('span');
@@ -253,7 +257,7 @@ function updateGame({players, gameState}){
         playercard.appendChild(isDrawing);
         playercard.appendChild(score);
 
-        document.querySelector('.cardsflexcontainer').appendChild(playercard)
+        cardcontainer.appendChild(playercard)
     });
 
 
