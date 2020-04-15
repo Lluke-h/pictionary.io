@@ -55,6 +55,9 @@ socket.on('receive-drawing', drawing => {
 
 // ------------------------ Drawing -------------------------
 
+const canvas = document.querySelector('#draw');
+const ctx = canvas.getContext('2d');
+
 
 socket.on('message', socket => console.log(socket));
 
@@ -67,10 +70,11 @@ socket.on('draw', data => {
 });
 socket.on('startdraw', startDraw);
 socket.on('stopdraw', stopDraw);
-socket.on('playerupdate', players => updatePlayercards(players));
 
-const canvas = document.querySelector('#draw');
-const ctx = canvas.getContext('2d');
+socket.on('clearcanvas', () => ctx.clearRect(0, 0, canvas.width, canvas.height))
+
+
+
 
 ctx.lineCap = 'round';
 ctx.lineJoin = 'round';
@@ -106,19 +110,6 @@ function stopDraw() {
     isDrawing = false
 }
 
-function updatePlayercards(players) {
-    console.log('update player cards');
-    const playercards = document.querySelector('.playercards');
-    playercards.innerHTML = "";
-
-    // players.forEach(player => {
-    //     console.log('added playerCard !!!');
-    //     const card = document.createElement('div');
-    //     card.textContent = player.id;
-    //     card.setAttribute('class', 'playercard');
-    //     playercards.appendChild(card);
-    // });
-}
 
 canvas.addEventListener('mousemove', (e) => {
     draw(e);
@@ -163,6 +154,11 @@ let myTurn = false;
 socket.on('your-turn', function (msg) {
     myTurn = true;
     getWords();
+});
+
+socket.on('stop-turn', () => myTurn = false);
+socket.on('itsyourturn', () =>{
+    socket.emit('myturn');
 });
 
 function getWords() {
@@ -250,7 +246,10 @@ function updateGame({players, gameState}) {
         const score = document.createElement('div');
 
         playercard.innerText = players[key].name;
-        if (players[key].drawing) isDrawing.innerText = ' is drawing !';
+        if (players[key].drawing) {
+            isDrawing.innerText = ' is drawing !';
+            playercard.classList.add('isdrawing')
+        }
         score.innerText = `Score : ${players[key].score}`;
 
         playercard.appendChild(playerName);
